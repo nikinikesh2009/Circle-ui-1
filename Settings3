@@ -1,0 +1,598 @@
+<!doctype html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Circle Settings</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <style>
+        body {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f6f6f6;
+            color: #2e2e2e;
+            line-height: 1.5;
+            min-height: 100%;
+            font-size: 14px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0;
+            background: white;
+            min-height: 100%;
+        }
+
+        .header {
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 20px 24px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .header h1 {
+            font-size: 20px;
+            font-weight: 600;
+            margin: 0;
+            color: #2e2e2e;
+        }
+
+        .header .subtitle {
+            font-size: 14px;
+            color: #8e8e93;
+            margin: 4px 0 0 0;
+        }
+
+        .header .tagline {
+            display: none;
+        }
+
+        .settings-grid {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            min-height: calc(100% - 80px);
+        }
+
+        .sidebar {
+            background: #f6f6f6;
+            border-right: 1px solid #e0e0e0;
+            padding: 0;
+            height: 100%;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 24px;
+            cursor: pointer;
+            transition: background-color 0.15s ease;
+            font-size: 14px;
+            font-weight: 400;
+            color: #2e2e2e;
+            border: none;
+            margin: 0;
+        }
+
+        .nav-item:hover {
+            background-color: #ebebeb;
+        }
+
+        .nav-item.active {
+            background-color: #007aff;
+            color: white;
+        }
+
+        .nav-icon {
+            margin-right: 12px;
+            font-size: 16px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .main-content {
+            background: white;
+            padding: 0;
+        }
+
+        .section {
+            padding: 24px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .section:last-child {
+            border-bottom: none;
+        }
+
+        .section-header {
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2e2e2e;
+            margin: 0 0 8px 0;
+        }
+
+        .section-description {
+            color: #8e8e93;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .setting-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .setting-row:last-child {
+            border-bottom: none;
+        }
+
+        .setting-info h4 {
+            margin: 0 0 4px 0;
+            font-weight: 500;
+            color: #2e2e2e;
+            font-size: 14px;
+        }
+
+        .setting-info p {
+            margin: 0;
+            font-size: 13px;
+            color: #8e8e93;
+            line-height: 1.3;
+        }
+
+        .toggle {
+            position: relative;
+            width: 51px;
+            height: 31px;
+            background: #e5e5ea;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            border: none;
+            outline: none;
+        }
+
+        .toggle.active {
+            background: #34c759;
+        }
+
+        .toggle::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 27px;
+            height: 27px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.2s ease;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.15), 0 3px 1px rgba(0,0,0,0.06);
+        }
+
+        .toggle.active::after {
+            transform: translateX(20px);
+        }
+
+        .select {
+            padding: 8px 12px;
+            border: 1px solid #d1d1d6;
+            border-radius: 8px;
+            background: white;
+            color: #2e2e2e;
+            font-size: 14px;
+            cursor: pointer;
+            min-width: 120px;
+            font-family: inherit;
+        }
+
+        .select:focus {
+            outline: none;
+            border-color: #007aff;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            border: 1px solid transparent;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: #007aff;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0056cc;
+        }
+
+        .btn-secondary {
+            background: #f2f2f7;
+            color: #2e2e2e;
+            border-color: #d1d1d6;
+        }
+
+        .btn-secondary:hover {
+            background: #e5e5ea;
+        }
+
+        .btn-danger {
+            background: #ff3b30;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #d70015;
+        }
+
+        .logout-section {
+            background: #fff5f5;
+            border-top: 1px solid #fed7d7;
+        }
+
+        .bottom-message {
+            text-align: center;
+            color: #8e8e93;
+            font-size: 13px;
+            padding: 24px;
+            background: #f6f6f6;
+            border-top: 1px solid #e0e0e0;
+            margin: 0;
+        }
+
+        @media (max-width: 768px) {
+            .settings-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                border-right: none;
+                border-bottom: 1px solid #e0e0e0;
+                display: flex;
+                overflow-x: auto;
+                background: white;
+            }
+            
+            .nav-item {
+                white-space: nowrap;
+                padding: 12px 16px;
+                border-right: 1px solid #f0f0f0;
+            }
+            
+            .nav-item:last-child {
+                border-right: none;
+            }
+            
+            .container {
+                padding: 0;
+            }
+            
+            .header {
+                padding: 16px 20px;
+            }
+            
+            .section {
+                padding: 20px;
+            }
+            
+            .setting-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+        }
+    </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+ </head>
+ <body>
+  <div class="container">
+   <header class="header">
+    <h1 id="main-title">Your space, your rules.</h1>
+    <div class="subtitle" id="main-subtitle">
+     Tweak how Circle feels — from privacy to notifications.
+    </div>
+    <div class="tagline" id="tagline">
+     Make it your world, your way.
+    </div>
+   </header>
+   <div class="settings-grid">
+    <nav class="sidebar">
+     <div class="nav-item active" onclick="scrollToSection('account')"><span class="nav-icon">👤</span> Account
+     </div>
+     <div class="nav-item" onclick="scrollToSection('notifications')"><span class="nav-icon">🔔</span> Notifications
+     </div>
+     <div class="nav-item" onclick="scrollToSection('privacy')"><span class="nav-icon">🔒</span> Privacy &amp; Security
+     </div>
+     <div class="nav-item" onclick="scrollToSection('appearance')"><span class="nav-icon">🎨</span> Appearance
+     </div>
+     <div class="nav-item" onclick="scrollToSection('language')"><span class="nav-icon">🌐</span> Language
+     </div>
+     <div class="nav-item" onclick="scrollToSection('ai')"><span class="nav-icon">🤖</span> AI Settings
+     </div>
+     <div class="nav-item" onclick="scrollToSection('support')"><span class="nav-icon">❓</span> Help &amp; Support
+     </div>
+     <div class="nav-item" onclick="scrollToSection('logout')"><span class="nav-icon">🚪</span> Logout
+     </div>
+    </nav>
+    <main class="main-content"><!-- Account Section -->
+     <section class="section" id="account">
+      <div class="section-header">
+       <h2 class="section-title">Account</h2>
+       <p class="section-description">Manage your profile, email, and login details. You control what people see — and what stays private.</p>
+      </div>
+      <div class="setting-row">
+       <div class="setting-info">
+        <h4>Edit Profile</h4>
+        <p>Update your bio, avatar, and interests.</p>
+       </div><button class="btn btn-primary">Edit</button>
+      </div>
+      <div class="setting-row">
+       <div class="setting-info">
+        <h4>Change Password</h4>
+        <p>Because digital safety matters.</p>
+       </div><button class="btn btn-secondary">Change</button>
+      </div>
+      <div class="setting-row">
+       <div class="setting-info">
+        <h4>Delete Account</h4>
+        <p>Leaving already? We'll miss your vibe.</p>
+       </div><button class="btn btn-danger">Delete</button>
+      </div>
+     </section><!-- Notifications Section -->
+     <section class="section" id="notifications">
+      <div class="section-header">
+       <h2 class="section-title">Notifications</h2>
+       <p class="section-description">Choose what you want to hear from us — and how often.</p>
+      </div>
+      <div class="setting-row">
+       <div class="setting-info">
+        <h4>Circle Chat Alerts</h4>
+        <p>When someone messages in your Circles.</p>
+       </div>
+       <div class="toggle active" onclick="toggleSwitch(this)"></div>
+      </div>
+      <div class="setting-row">
+       <div class="setting-info">
+        <h4>DM Alerts</h4>
+        <p>When a friend sends you a private message.</p>
+       </div>
+       <div class="toggle active" onclick="toggleSwitch(this)"></div>
+      </div>
+      <div class="setting-row">
+       <div class="setting-info">
+        <h4>Trending Circle Updates</h4>
+        <p>When new communities start blowing up.</p>
+       </div>
+       <div class="toggle" onclick="toggleSwitch(this)"></div>
+      </div>
+      <div class="setting-row">
+       <div class="setting-info">
+        <h4>Quiet Mode</h4>
+        <p>Turn off all alerts for peace and focus.</p>
+       </div>
+       <div class="toggle" onclick="toggleSwitch(this)"></div>
+      </div>
+     </section><!-- Privacy & Security Section -->
+     <section class="section" id="privacy">
+      <div class="section-header">
+       <h2 class="section-title">Privacy &amp; Security</h2>
+       <p class="section-description">Keep control over your world. Decide who can find, message, or follow you.</p>
+      </div>
+      <div class="setting-row">
+       <div class="setting-info">
+        <h4>Who can DM me?</h4>
+        <p>Control who can send you direct messages.</p>
+       </div><select class="select"> <option>Everyone</option> <option>Only Circle Members</option> <option>Nobody</option> </select>
+      </div>
+      <div class="setting-row">
+       <div class="setting-info">
+        <h4>Show my active status</h4>
+        <p>Turn off if you prefer a low-key vibe.</p>
+       </div>
+       <div class="toggle active" onclick="toggleSwitch(this)"></div>
+      </div>
+      <div class="setting-row">
+       <div class="setting-info">
+        <h4>AI Personalization</h4>
+        <p>Let AI learn from your activity to suggest better Circles.</p>
+       </div>
+       <div class="toggle active" onclick="toggleSwitch(this)"></div>
+      </div>
+      <div class="setting-row">
+       <div class="setting-info">
+        <h4>View AI Data</h4>
+        <p>See how your AI recommendations are built.</p>
+       </div><button class="btn btn-secondary">View Data</button>
+      </div>
+     </section><!-- Appearance Section -->
+     <section class="section" id="appearance">
+      <div class="section-header">
+       <h2 class="section-title">Appearance</h2>
+       <p class="section-description">Pick the mood you want to feel in. Circle looks different in every light.</p>
+      </div>
+      <div class="setting-row">
+       <div class="setting-info">
+        <h4>Theme</h4>
+        <p>Choose your preferred color scheme.</p>
+       </div><select class="select"> <option>Light</option> <option>Dark</option> <option>Auto</option> </select>
+      </div>
+      <div class="setting-row">
+       <div class="setting-info">
+        <h4>Font Size</h4>
+        <p>Readable, relaxed, or compact — you choose.</p>
+       </div><select class="select"> <option>Compact</option> <option>Readable</option> <option>Relaxed</option> </select>
+      </div>
+     </section><!-- Language Section -->
+     <section class="section" id="language">
+      <div class="section-header">
+       <h2 class="section-title">Language</h2>
+       <p class="section-description">Talk your way. Choose your preferred language across the app.</p>
+      </div>
+      <div class="setting-row">
+       <div class="setting-info">
+        <h4>App Language</h4>
+        <p>Select your preferred language.</p>
+       </div><select class="select"> <option>English</option> <option>Spanish</option> <option>French</option> <option>German</option> <option>Japanese</option> </select>
+      </div>
+     </section><!-- AI Settings Section -->
+     <section class="section" id="ai">
+      <div class="section-header">
+       <h2 class="section-title">AI Settings</h2>
+       <p class="section-description">Control how the AI helps you. You can pause, reset, or fine-tune how it learns.</p>
+      </div>
+      <div class="setting-row">
+       <div class="setting-info">
+        <h4>Reset AI Recommendations</h4>
+        <p>Clear all previous learning.</p>
+       </div><button class="btn btn-secondary">Reset</button>
+      </div>
+      <div class="setting-row">
+       <div class="setting-info">
+        <h4>Adjust AI Sensitivity</h4>
+        <p>Decide how quickly the AI adapts.</p>
+       </div><select class="select"> <option>Low</option> <option>Medium</option> <option>High</option> </select>
+      </div>
+     </section><!-- Help & Support Section -->
+     <section class="section" id="support">
+      <div class="section-header">
+       <h2 class="section-title">Help &amp; Support</h2>
+       <p class="section-description">Need a hand? We've got your back. Explore FAQs, contact support, or send feedback directly.</p>
+      </div>
+      <div class="setting-row">
+       <div class="setting-info">
+        <h4>FAQs</h4>
+        <p>Find answers to common questions.</p>
+       </div><button class="btn btn-secondary">View FAQs</button>
+      </div>
+      <div class="setting-row">
+       <div class="setting-info">
+        <h4>Report a Bug</h4>
+        <p>Help us improve Circle.</p>
+       </div><button class="btn btn-secondary">Report</button>
+      </div>
+      <div class="setting-row">
+       <div class="setting-info">
+        <h4>Chat with Support</h4>
+        <p>Get help from our team.</p>
+       </div><button class="btn btn-primary">Chat Now</button>
+      </div>
+      <div class="setting-row">
+       <div class="setting-info">
+        <h4>Send Feedback</h4>
+        <p>Share your thoughts with us.</p>
+       </div><button class="btn btn-secondary">Send</button>
+      </div>
+     </section><!-- Logout Section -->
+     <section class="section logout-section" id="logout">
+      <div class="section-header">
+       <h2 class="section-title">Logout</h2>
+       <p class="section-description">Logging out? Don't worry — your Circles will be waiting when you're back.</p>
+      </div>
+      <div class="setting-row">
+       <div class="setting-info">
+        <h4>Sign Out</h4>
+        <p>End your current session.</p>
+       </div><button class="btn btn-danger">Logout</button>
+      </div>
+     </section>
+    </main>
+   </div>
+   <div class="bottom-message" id="bottom-message">
+    Circle grows with you.<br>
+     The more you shape your settings, the more it feels like home.
+   </div>
+  </div>
+  <script>
+        const defaultConfig = {
+            main_title: "Your space, your rules.",
+            main_subtitle: "Tweak how Circle feels — from privacy to notifications.",
+            tagline: "Make it your world, your way.",
+            bottom_message: "Circle grows with you.\nThe more you shape your settings, the more it feels like home."
+        };
+
+        function toggleSwitch(element) {
+            element.classList.toggle('active');
+        }
+
+        function scrollToSection(sectionId) {
+            // Update active nav item
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.closest('.nav-item').classList.add('active');
+            
+            // Scroll to section
+            document.getElementById(sectionId).scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+
+        async function onConfigChange(config) {
+            const titleElement = document.getElementById('main-title');
+            const subtitleElement = document.getElementById('main-subtitle');
+            const taglineElement = document.getElementById('tagline');
+            const bottomMessageElement = document.getElementById('bottom-message');
+
+            if (titleElement) {
+                titleElement.textContent = config.main_title || defaultConfig.main_title;
+            }
+            if (subtitleElement) {
+                subtitleElement.textContent = config.main_subtitle || defaultConfig.main_subtitle;
+            }
+            if (taglineElement) {
+                taglineElement.textContent = config.tagline || defaultConfig.tagline;
+            }
+            if (bottomMessageElement) {
+                const message = config.bottom_message || defaultConfig.bottom_message;
+                bottomMessageElement.innerHTML = message.replace(/\n/g, '<br>');
+            }
+        }
+
+        function mapToCapabilities(config) {
+            return {
+                recolorables: [],
+                borderables: [],
+                fontEditable: undefined,
+                fontSizeable: undefined
+            };
+        }
+
+        function mapToEditPanelValues(config) {
+            return new Map([
+                ["main_title", config.main_title || defaultConfig.main_title],
+                ["main_subtitle", config.main_subtitle || defaultConfig.main_subtitle],
+                ["tagline", config.tagline || defaultConfig.tagline],
+                ["bottom_message", config.bottom_message || defaultConfig.bottom_message]
+            ]);
+        }
+
+        // Initialize SDK
+        if (window.elementSdk) {
+            window.elementSdk.init({
+                defaultConfig,
+                onConfigChange,
+                mapToCapabilities,
+                mapToEditPanelValues
+            });
+        }
+    </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99e0877ac009b2fa',t:'MTc2MzA2MDYwNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
